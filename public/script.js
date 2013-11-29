@@ -1,7 +1,7 @@
 var socket = io.connect();
 
-function addMessage(msg, pseudo) {
-	$("#chatEntries").append('<div class="message"><p>' + pseudo + ' : ' + msg + '</p></div>');
+function addMessage(msg, nickname) {
+	$('#chatEntries').append('<div class="message"><p>' + nickname + ' : ' + msg + '</p></div>');
 }
 
 function sentMessage() {
@@ -13,22 +13,26 @@ function sentMessage() {
 	}
 }
 
-function setPseudo() {
-   if ($("#pseudoInput").val() != "")
+function setNickname() {
+   if ($('#nicknameInput').val() != "")
    {
-      socket.emit('setPseudo', $("#pseudoInput").val());
+      socket.emit('setNickname', $("#nicknameInput").val());
       $('#chatControls').show();
-      $('#pseudoInput').hide();
-      $('#pseudoSet').hide();
+      $('#nicknameLabel').hide();
+      $('#nicknameInput').hide();
+      $('#nicknameSet').hide();
+      $('#messageInput').focus();
    }
 }
 
 socket.on('message', function(data) {
-   addMessage(data['message'], data['pseudo']);
+   addMessage(data['message'], data['nickname']);
 });
 
 $(function() {
-   $("#chatControls").hide();
-   $("#pseudoSet").click(function() {setPseudo()});
-   $("#submit").click(function() {sentMessage();});
+   $('#chatControls').hide();
+   $('#nicknameSet').click(function() { setNickname(); });
+   $('#nicknameInput').keypress(function(e) { if(e.which == 13) { setNickname(); } });
+   $('#submit').click(function() { sentMessage(); });
+   $('#messageInput').keypress(function(e) { if(e.which == 13) { sentMessage(); } });
 });

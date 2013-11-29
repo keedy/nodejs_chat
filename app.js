@@ -15,16 +15,17 @@ app.get('/', function(req, res){
   res.render('home.jade');
 });
 
-server.listen(3000);
+server.listen(80);
 
 io.sockets.on('connection', function (socket) {
-	socket.on('setPseudo', function (data) {
-   		socket.set('pseudo', data);
+	socket.on('setNickname', function (data) {
+   		socket.set('nickname', data);
 	});
 
 	socket.on('message', function (message) {
-		socket.get('pseudo', function (error, name) {
-			var data = { 'message' : message, pseudo : name };
+		socket.get('nickname', function(error, name) {
+			console.log('Nickname in server: ' + name);
+			var data = { 'message' : message, nickname : name };
 			socket.broadcast.emit('message', data);
 			console.log("user " + name + " send this : " + message);
 	   });
