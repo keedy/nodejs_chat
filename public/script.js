@@ -28,6 +28,7 @@ function setNickname() {
       logged = true;
       $('#chatControls').show();
       $('#chatEntries').show();
+      $('#users').show();
       $('.col-xs-3').hide();
       $('#submit').show();
       $('#nicknameInput').hide();
@@ -44,8 +45,6 @@ socket.on('message', function(data) {
 });
 
 $(function() {
-   $('#chatControls').hide();
-   $('#submit').hide();
    $('#nicknameSet').click(function() { setNickname(); });
    $('#nicknameInput').keypress(function(e) { if(e.which == 13) { setNickname(); } }).focus();
    $('#submit').click(function() { sentMessage(); });

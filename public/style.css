@@ -9,8 +9,35 @@ body, html {
 	margin: 0 0 10px 15px;
 	width: 72%;
 	height: 500px;
+	float: left;
 	border: 1px solid #ccc;
 	border-radius: 4px;
+}
+
+#chatControls {
+	display: none;
+}
+
+#messageInput {
+	display: none;
+}
+
+#submit {
+	display: none;
+}
+
+#users {
+	display: none;
+	margin: 0 0 0 10px;
+	width: 25%;
+	height: 500px;
+	float: right;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.clear {
+	clear: both;
 }
 
 .scrollable {
