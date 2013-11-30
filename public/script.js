@@ -2,9 +2,9 @@
 var socket = io.connect();
 var logged = false;
 
-function addMessage(msg, nickname) {
+function addMessage(message, nickname) {
    if(logged) {
-	  $('#chatEntries').append('<div class="message"><p><strong>' + nickname + '</strong>: ' + msg + '</p></div>');
+	  $('#chatEntries').append('<div class="message"><p><strong>' + nickname + '</strong>: ' + message + '</p></div>');
    }
 }
 
@@ -24,14 +24,16 @@ function sentMessage() {
 function setNickname() {
    if ($('#nicknameInput').val() != "")
    {
-      socket.emit('setNickname', $("#nicknameInput").val());
+      var nickname = $("#nicknameInput").val();
+      socket.emit('setNickname', nickname);
       logged = true;
+
       $('#chatControls').show();
       $('#chatEntries').show();
       $('#users').show();
       $('#messageInput').show();
-      $('#nicknameContainer').hide();
       $('#submit').show();
+      $('#nicknameContainer').hide();
       $('#nicknameInput').hide();
       $('#nicknameSet').hide();
       $('#messageInput').focus();
