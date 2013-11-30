@@ -2,6 +2,9 @@ var express = require('express'),
 	app = express(),
 	server = require('http').createServer(app),
 	redis = require('redis'),
+	store = redis.createClient(),
+	pub = redis.createClient(),
+	sub = redis.createClient(),
 	jade = require('jade'),
 	io = require('socket.io').listen(server);
 
@@ -24,10 +27,10 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('message', function (message) {
-		socket.get('nickname', function(error, name) {
-			var data = {'message' : message, 'nickname' : name};
+		socket.get('nickname', function(error, nickname) {
+			var data = {'message' : message, 'nickname' : nickname};
 			socket.broadcast.emit('message', data);
-			console.log("user " + name + " send: " + message);
+			console.log("user " + nickname + " send: " + message);
 	   });
 	});
 });
