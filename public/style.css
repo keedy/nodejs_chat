@@ -1,0 +1,23 @@
+body, html {
+	height: 100%;
+	overflow: hidden;
+}
+
+#chatEntries {
+	display: none;
+	padding: 10px 0 0 0;
+	margin: 0 0 10px 15px;
+	width: 72%;
+	height: 500px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.scrollable {
+    height: 100%;
+    overflow: auto;
+}
+
+.message p {
+	padding-left: 10px;
+}
