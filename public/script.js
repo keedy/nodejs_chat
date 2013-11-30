@@ -29,7 +29,7 @@ function setNickname() {
       $('#chatControls').show();
       $('#chatEntries').show();
       $('#users').show();
-      $('.col-xs-3').hide();
+      $('#nicknameContainer').hide();
       $('#submit').show();
       $('#nicknameInput').hide();
       $('#nicknameSet').hide();
