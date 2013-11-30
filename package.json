@@ -1,7 +1,13 @@
 {
-	"name": "chat",
+	"name": "simple_chat",
 	"version": "0.0.1",
-	"private": "true",
+	"description": "Simple chat based on Node.js and Redis",
+	"author": "Piotr Biernat",
+	"private": "false",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/keedy/nodejs_chat.git"
+	}
 	"dependencies":{
 		"socket.io": "0.9.16",
 		"express": "3.4.5",
