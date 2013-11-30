@@ -2,30 +2,32 @@
 var socket = io.connect();
 var logged = false;
 
-function addMessage(message, nickname) {
+function addMessage(message, nickname, room) {
    if(logged) {
-	  $('#chatEntries').append('<div class="message"><p><strong>' + nickname + '</strong>: ' + message + '</p></div>');
+	  $('#chatEntries > .' + room).append('<div class="message"><p><strong>' + nickname + '</strong>: ' + message + '</p></div>');
    }
 }
 
 function sentMessage() {
-	if ($('#messageInput').val() != "") 
-	{
-      $('#messageInput').parent().removeClass('has-error');
-      socket.emit('message', $('#messageInput').val());
-      addMessage($('#messageInput').val(), "Me", new Date().toISOString(), true);
-		$('#messageInput').val('').focus();
+   var messageElem = $('#messageInput');
+   var message = messageElem.val();
+
+	if (message != '') {
+      messageElem.parent().removeClass('has-error');
+      socket.emit('message', message);
+      addMessage(message, 'Me', 'chat');
+		messageElem.val('').focus();
 	}
    else {
-      $('#messageInput').parent().addClass('has-error');
+      messageElem.parent().addClass('has-error');
    }
 }
 
 function setNickname() {
-   if ($('#nicknameInput').val() != "")
-   {
-      var nickname = $("#nicknameInput").val();
+   var nickname = $('#nicknameInput').val();
+   if(nickname != '') {
       socket.emit('setNickname', nickname);
+      socket.emit('join', 'chat');
       logged = true;
 
       $('#chatControls').show();
@@ -33,9 +35,11 @@ function setNickname() {
       $('#users').show();
       $('#messageInput').show();
       $('#submit').show();
+
       $('#nicknameContainer').hide();
       $('#nicknameInput').hide();
       $('#nicknameSet').hide();
+
       $('#messageInput').focus();
    }
    else {
@@ -44,7 +48,8 @@ function setNickname() {
 }
 
 socket.on('message', function(data) {
-   addMessage(data['message'], data['nickname']);
+   console.log(data);
+   addMessage(data['message'], data['nickname'], data['room']);
 });
 
 $(function() {

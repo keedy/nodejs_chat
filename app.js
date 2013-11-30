@@ -26,11 +26,17 @@ io.sockets.on('connection', function (socket) {
    		socket.set('nickname', nickname);
 	});
 
+	socket.on('join', function(room) {
+		socket.set('room', room);
+	});
+
 	socket.on('message', function (message) {
 		socket.get('nickname', function(error, nickname) {
-			var data = {'message' : message, 'nickname' : nickname};
-			socket.broadcast.emit('message', data);
-			console.log("user " + nickname + " send: " + message);
+			socket.get('room', function(error, room) {
+				var data = {'message' : message, 'nickname' : nickname, 'room': room};
+				socket.broadcast.emit('message', data);
+				console.log('user ' + nickname + ' send: ' + message + ' at room: ' + room);
+			});
 	   });
 	});
 });
