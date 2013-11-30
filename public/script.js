@@ -1,7 +1,10 @@
 var socket = io.connect();
+var logged = false;
 
 function addMessage(msg, nickname) {
-	$('#chatEntries').append('<div class="message"><p>' + nickname + ' : ' + msg + '</p></div>');
+   if(logged) {
+	  $('#chatEntries').append('<div class="message"><p>' + nickname + ' : ' + msg + '</p></div>');
+   }
 }
 
 function sentMessage() {
@@ -17,6 +20,7 @@ function setNickname() {
    if ($('#nicknameInput').val() != "")
    {
       socket.emit('setNickname', $("#nicknameInput").val());
+      logged = true;
       $('#chatControls').show();
       $('#nicknameLabel').hide();
       $('#nicknameInput').hide();

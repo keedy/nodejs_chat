@@ -24,7 +24,6 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('message', function (message) {
 		socket.get('nickname', function(error, name) {
-			console.log('Nickname in server: ' + name);
 			var data = { 'message' : message, nickname : name };
 			socket.broadcast.emit('message', data);
 			console.log("user " + name + " send this : " + message);
