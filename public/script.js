@@ -30,15 +30,7 @@ function setNickname() {
       socket.emit('join', 'chat');
       logged = true;
 
-      $('#chatControls').show();
-      $('#chatEntries').show();
-      $('#users').show();
-      $('#messageInput').show();
-      $('#submit').show();
-
-      $('#nicknameContainer').hide();
-      $('#nicknameInput').hide();
-      $('#nicknameSet').hide();
+      switchControlls();
 
       $('#messageInput').focus();
    }
@@ -47,10 +39,25 @@ function setNickname() {
    }
 }
 
+function switchControlls() {
+   $('#chatControls').css('display')      == 'none' ? $('#chatControls').show()        : $('#chatControls').hide();
+   $('#chatEntries').css('display')       == 'none' ? $('#chatEntries').show()         : $('#chatEntries').hide();
+   $('#users').css('display')             == 'none' ? $('#users').show()               : $('#users').hide();
+   $('#messageInput').css('display')      == 'none' ? $('#messageInput').show()        : $('#messageInput').hide();
+   $('#submit').css('display')            == 'none' ? $('#submit').show()              : $('#submit').hide();
+
+   $('#nicknameContainer').css('display') == 'none' ? $('#nicknameContainer').show()   : $('#nicknameContainer').hide();
+   $('#nicknameInput').css('display')     == 'none' ? $('#nicknameInput').show()       : $('#nicknameInput').hide();
+   $('#nicknameSet').css('display')       == 'none' ? $('#nicknameSet').show()         : $('#nicknameSet').hide();
+}
+
 socket.on('message', function(data) {
-   console.log(data);
    addMessage(data['message'], data['nickname'], data['room']);
 });
+
+socket.on('disconnect', function() {
+   switchControlls();
+})
 
 $(function() {
    $('#nicknameSet').click(function() { setNickname(); });
