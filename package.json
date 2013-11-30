@@ -7,7 +7,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/keedy/nodejs_chat.git"
-	}
+	},
 	"dependencies":{
 		"socket.io": "0.9.16",
 		"express": "3.4.5",
