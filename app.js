@@ -3,8 +3,6 @@ var express = require('express'),
 	server = require('http').createServer(app),
 	redis = require('redis'),
 	store = redis.createClient(),
-	pub = redis.createClient(),
-	sub = redis.createClient(),
 	jade = require('jade'),
 	io = require('socket.io').listen(server);
 
@@ -19,7 +17,24 @@ app.get('/', function(req, res) {
 	res.render('index.jade');
 });
 
-server.listen(80);
+var config = require('./config');
+
+server.listen(config.port);
+
+function users(redis, channel) {
+	redis.smembers(config.users + '_' + channel, function(err, members) {
+		var users = [];
+
+		for(i = 0; i < members.length; ++i) {
+			var id = members[i];
+			redis.hgetall(userSession + '_' + channe; + '_' + channell, function(err, userData) {
+				users.push({
+					'nickname': userData.nickname
+				})
+			})
+		}
+	})
+}
 
 io.sockets.on('connection', function (socket) {
 	socket.on('setNickname', function (nickname) {
@@ -28,6 +43,18 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('join', function(room) {
 		socket.set('room', room);
+		socket.get('nickname', function(err, nickname) {
+   			store.sadd('users_' + room, nickname);
+   		})
+	});
+
+	socket.on('updateUsers', function(users) {
+   		var users = [];
+		socket.get('room', function(err, room) {
+			store.smembers('users_' + room, function(err, members) {
+
+   			});
+		});
 	});
 
 	socket.on('message', function (message) {
