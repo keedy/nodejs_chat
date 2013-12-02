@@ -45,7 +45,6 @@ function switchControlls() {
    $('#users').css('display')             == 'none' ? $('#users').show()               : $('#users').hide();
    $('#messageInput').css('display')      == 'none' ? $('#messageInput').show()        : $('#messageInput').hide();
    $('#submit').css('display')            == 'none' ? $('#submit').show()              : $('#submit').hide();
-
    $('#nicknameContainer').css('display') == 'none' ? $('#nicknameContainer').show()   : $('#nicknameContainer').hide();
    $('#nicknameInput').css('display')     == 'none' ? $('#nicknameInput').show()       : $('#nicknameInput').hide();
    $('#nicknameSet').css('display')       == 'none' ? $('#nicknameSet').show()         : $('#nicknameSet').hide();
