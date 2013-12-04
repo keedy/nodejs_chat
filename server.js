@@ -21,13 +21,13 @@ var config = require('./config');
 
 server.listen(config.port);
 
-function users(redis, channel) {
-	redis.smembers(config.users + '_' + channel, function(err, members) {
+function users(redis, room, callback) {
+	redis.smembers(config.users + '_' + room, function(err, members) {
 		var users = [];
 
 		for(i = 0; i < members.length; ++i) {
 			var id = members[i];
-			redis.hgetall(userSession + '_' + channe; + '_' + channell, function(err, userData) {
+			redis.hgetall(userSession + '_' + room; + '_' + channell, function(err, userData) {
 				users.push({
 					'nickname': userData.nickname
 				})
