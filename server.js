@@ -27,7 +27,7 @@ function users(redis, room, callback) {
 
 		for(i = 0; i < members.length; ++i) {
 			var id = members[i];
-			redis.hgetall(userSession + '_' + room; + '_' + channell, function(err, userData) {
+			redis.hgetall(userSession + '_' + room + '_' + channell, function(err, userData) {
 				users.push({
 					'nickname': userData.nickname
 				})
