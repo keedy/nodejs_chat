@@ -3,18 +3,16 @@ var express = require('express'),
 	server = require('http').createServer(app),
 	redis = require('redis'),
 	store = redis.createClient(),
-	jade = require('jade'),
 	io = require('socket.io').listen(server);
 
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
-app.set("view options", { layout: false });
+app.set('view engine', 'twig');
 app.configure(function() {
    app.use(express.static(__dirname + '/public'));
 });
 
 app.get('/', function(req, res) {
-	res.render('index.jade');
+	res.render('index.twig');
 });
 
 var config = require('./config');
