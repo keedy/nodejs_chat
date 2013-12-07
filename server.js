@@ -16,22 +16,45 @@ app.get('/', function(req, res) {
 });
 
 var config = require('./config');
+function addUserToList(redis, nickname, room) {
+	redis.hset('user-data-' + nickname + '-' + room, 'nickname', nickname);
+	redis.hset('user-data-' + nickname + '-' + room, 'connectedAt', Date.now());
+	redis.hset('user-data-' + nickname + '-' + room, 'lastActivity', Date.now());
 
+	redis.sadd('list-' + room, nickname);
+}
 server.listen(config.port);
 
-function users(redis, room, callback) {
-	redis.smembers(config.users + '_' + room, function(err, members) {
+function getUsers(redis, room, callback) {
+	redis.smembers('list-' + room, function(err, members) {
 		var users = [];
+		var i = 0;
+		var numCompleted = 0;
 
-		for(i = 0; i < members.length; ++i) {
-			var id = members[i];
-			redis.hgetall(userSession + '_' + room + '_' + channell, function(err, userData) {
-				users.push({
-					'nickname': userData.nickname
-				})
-			})
+		var markAsCompleted = function() {
+			numCompleted++;
+
+			if(numCompleted == members.length) {
+				callback(users);
+			}
+		};
+
+		if(!members || members.length === 0) {
+			callback([]);
 		}
-	})
+		else {
+			for(i = 0; i < members.length; ++i) {
+				var userID = members[i];
+				redis.hgetall('user-data-' + userID + '-' + room, function(err, userData) {
+					users.push({
+						'nickname': userData.nickname,
+						'connectedAt': userData.connectedAt
+					});
+					markAsCompleted();
+				});
+			}
+		}
+	});
 }
 
 io.sockets.on('connection', function (socket) {
@@ -42,25 +65,18 @@ io.sockets.on('connection', function (socket) {
 	socket.on('join', function(room) {
 		socket.set('room', room);
 		socket.get('nickname', function(err, nickname) {
-   			store.sadd('users_' + room, nickname);
-   		})
-	});
-
-	socket.on('updateUsers', function(users) {
-   		var users = [];
-		socket.get('room', function(err, room) {
-			store.smembers('users_' + room, function(err, members) {
-
+   			addUserToList(datastore, nickname, room);
+   			getUsers(datastore, room, function(users) {
+   				io.sockets.emit('usersList', users);
    			});
-		});
+   		});
 	});
 
-	socket.on('message', function (message) {
+	socket.on('message', function(message) {
 		socket.get('nickname', function(error, nickname) {
 			socket.get('room', function(error, room) {
 				var data = {'message' : message, 'nickname' : nickname, 'room': room};
 				socket.broadcast.emit('message', data);
-				console.log('user ' + nickname + ' send: ' + message + ' at room: ' + room);
 			});
 	   });
 	});
