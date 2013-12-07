@@ -1,21 +1,46 @@
-var express = require('express'),
+"use strict";
+
+var config = require('./config'),
+	express = require('express'),
 	app = express(),
 	server = require('http').createServer(app),
+	io = require('socket.io').listen(server),
 	redis = require('redis'),
-	store = redis.createClient(),
-	io = require('socket.io').listen(server);
+	datastore = redis.createClient(config.redis.port, config.redis.host);
 
+// configure express
 app.set('views', __dirname + '/views');
 app.set('view engine', 'twig');
 app.configure(function() {
    app.use(express.static(__dirname + '/public'));
 });
 
+// configure socket.io
+io.configure(function () {
+	io.enable('browser client minification');
+	io.enable('browser client gzip');
+	io.set('log level', config.redis.log_level);
+	io.set('transports', [
+		'websocket',
+		'xhr-polling',
+		'jsonp-polling'
+	]);
+});
+
 app.get('/', function(req, res) {
 	res.render('index.twig');
 });
 
-var config = require('./config');
+server.listen(config.server.port, config.server.host);
+
+if(config.redis.password) {
+	datastore.auth(config.redis.password);
+}
+
+datastore.on('error', function(err) {
+	console.log('Redis error: ' + err);
+});
+
 function addUserToList(redis, nickname, room) {
 	redis.hset('user-data-' + nickname + '-' + room, 'nickname', nickname);
 	redis.hset('user-data-' + nickname + '-' + room, 'connectedAt', Date.now());
@@ -23,7 +48,6 @@ function addUserToList(redis, nickname, room) {
 
 	redis.sadd('list-' + room, nickname);
 }
-server.listen(config.port);
 
 function getUsers(redis, room, callback) {
 	redis.smembers('list-' + room, function(err, members) {
@@ -57,8 +81,8 @@ function getUsers(redis, room, callback) {
 	});
 }
 
-io.sockets.on('connection', function (socket) {
-	socket.on('setNickname', function (nickname) {
+io.sockets.on('connection', function(socket) {
+	socket.on('setNickname', function(nickname) {
    		socket.set('nickname', nickname);
 	});
 
