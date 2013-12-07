@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="SimpleChat">
+<html lang="en">
    <head>
-      <title>Simple Websockets chat</title>
-      <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-      <link rel="stylesheet" type="text/css" href="style.css">
+      <title>Simple Websocket Chat</title>
+      <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="/nodejs_chat.min.css">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
    </head>
    <body>
       <div class="container">
          <header>
-            <h1 class="text-center">Simple Websockets chat v0.2</h1>
+            <h1 class="text-center">Simple Websocket Chat</h1>
          </header>
          <div id="nicknameContainer" class="col-xs-3">
             <input type="text" placeholder="Enter nickname" id="nicknameInput" class="form-control">
@@ -18,7 +18,9 @@
          <div id="chatEntries" class="scrollable">
             <div class="chat"></div>
          </div>
-         <div id="users"></div>
+         <div id="usersContainer" class="col-xs-6 col-sm-3 sidebar-offcanvas">
+            <div id="users" class="list-group"></div>
+         </div>
          <div class="clear"></div>
          <div id="chatControls" class="col-xs-8">
             <input type="text" id="messageInput" class="form-control">
@@ -26,9 +28,9 @@
          <button id="submit" class="btn btn-primary">Send</button>
       </div>
       
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-      <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
       <script src="/socket.io/socket.io.js"></script>
-      <script src="/script.js"></script>
+      <script src="/nodejs_chat.min.js"></script>
    </body>
 </html>
