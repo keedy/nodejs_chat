@@ -9,6 +9,7 @@ var config = require('./config'),
 	datastore = redis.createClient(config.redis.port, config.redis.host);
 
 // configure express
+app.use(express.compress());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'twig');
 app.configure(function() {
