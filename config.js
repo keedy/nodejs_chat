@@ -23,6 +23,7 @@ exports.chat = {
 	anti_spam_protection: true,
 
 	admin_list: {
-		'keedy', 'keedy2'
+		nickname: 'keedy',
+		nickname: 'keedy2'
 	}
 }
