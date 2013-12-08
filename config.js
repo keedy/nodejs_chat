@@ -22,8 +22,5 @@ exports.chat = {
 	anti_flood_protection: true,
 	anti_spam_protection: true,
 
-	admin_list: {
-		nickname: 'keedy',
-		nickname: 'keedy2'
-	}
-}
+	admin_list: ['keedy', 'keedy2']
+};
