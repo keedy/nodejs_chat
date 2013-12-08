@@ -66,7 +66,7 @@ function getUsers(redis, room, callback) {
 		var markAsCompleted = function() {
 			numCompleted++;
 
-			if(numCompleted == members.length) {
+			if(numCompleted === members.length) {
 				callback(users);
 			}
 		};
@@ -75,15 +75,16 @@ function getUsers(redis, room, callback) {
 			callback([]);
 		}
 		else {
+			var userCallback = function(err, userData) {
+				users.push({
+					'nickname': userData.nickname,
+					'connectedAt': userData.connectedAt
+				});
+				markAsCompleted();
+			};
 			for(i = 0; i < members.length; ++i) {
 				var userID = members[i];
-				redis.hgetall('user-data-' + userID + '-' + room, function(err, userData) {
-					users.push({
-						'nickname': userData.nickname,
-						'connectedAt': userData.connectedAt
-					});
-					markAsCompleted();
-				});
+				redis.hgetall('user-data-' + userID + '-' + room, userCallback);
 			}
 		}
 	});
@@ -91,17 +92,17 @@ function getUsers(redis, room, callback) {
 
 io.sockets.on('connection', function(socket) {
 	socket.on('setNickname', function(nickname) {
-   		socket.set('nickname', nickname);
+		socket.set('nickname', nickname);
 	});
 
 	socket.on('join', function(room) {
 		socket.set('room', room);
 		socket.get('nickname', function(err, nickname) {
-   			addUserToList(datastore, nickname, room);
-   			getUsers(datastore, room, function(users) {
-   				io.sockets.emit('usersList', users);
-   			});
-   		});
+			addUserToList(datastore, nickname, room);
+			getUsers(datastore, room, function(users) {
+				io.sockets.emit('usersList', users);
+			});
+		});
 	});
 
 	socket.on('message', function(message) {
@@ -110,6 +111,7 @@ io.sockets.on('connection', function(socket) {
 				var data = {'message' : message, 'nickname' : nickname, 'room': room};
 				socket.broadcast.emit('message', data);
 			});
-	   });
+		});
+	});
 	});
 });
