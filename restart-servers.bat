@@ -1,0 +1,1 @@
+taskkill /F /IM node.exe && taskkill /F /IM redis-server.exe && node.exe server.js && redis-server.exe

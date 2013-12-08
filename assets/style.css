@@ -32,26 +32,44 @@ body, html {
 
 #users {
 	display: none;
-	height: 250px;
+	height: 240px;
 	border: 1px solid #ccc;
-	border-radius: 0px;
+	border-radius: 4px;
 }
 
 #users a {
-	padding: 6px 10px;
+	padding: 4px 6px;
+	margin-bottom: 0;
 	border: 0;
 	border-bottom: 1px solid #ccc;
-	border-bottom-right-radius: 0px;
-	border-bottom-left-radius: 0px;
+	border-radius: 0;
 }
 
-#users a:first-child {
-	border-top-right-radius: 0;
-	border-top-left-radius: 0;
+#users a:last-child {
+	border-bottom: 0;
 }
 
-#users a.active {
-	border-bottom: 1px;
+#roomsContainer {
+	display: none;
+}
+
+#rooms {
+	display: none;
+	height: 240px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+#rooms a {
+	padding: 4px 6px;
+	margin-bottom: 0;
+	border: 0;
+	border-bottom: 1px solid #ccc;
+	border-bradius: 0;
+}
+
+#rooms a:last-child {
+	border-bottom: 0;
 }
 
 .clear {

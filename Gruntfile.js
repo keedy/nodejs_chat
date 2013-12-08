@@ -1,46 +1,42 @@
-/*global module:false*/
 module.exports = function(grunt) {
 
-  // Project configuration.
   grunt.initConfig({
-    // Metadata.
     pkg: grunt.file.readJSON('package.json'),
-    dirs: {
-      src: 'src/',
-      dest: 'public/<%= pkg.name %>',
-      tests: 'tests/'
+    config: {
+      app_source: ['*.js', '!Gruntfile.js'],
+      assets: 'assets/',
+      assets_dest: 'public/<%= pkg.name %>',
+      tests: 'tests/',
+      views: 'views/*.twig',
+      banner: '/*!\n* <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' + 
+        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+        '<%= pkg.author.homepage ? "* " + pkg.author.homepage + "\\n" : "" %>' +
+        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+        ' Licensed <%= pkg.license %> \n*/\n',
     },
-    banner: '/*!\n* <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' + 
-      '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-      '<%= pkg.author.homepage ? "* " + pkg.author.homepage + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' Licensed <%= pkg.license %> \n*/\n',
     uglify: {
       options: {
-        banner: '<%= banner %>',
+        banner: '<%= config.banner %>', 
         preserveComments: 'some'
       },
       dist: {
         files: {
-          '<%= dirs.dest %>.min.js': ['<%= dirs.src %>*.js']
+          '<%= config.assets_dest %>.min.js': ['<%= config.assets %>*.js']
         }
       }
     },
     cssmin: {
       add_banner: {
         options: {
-          banner: '<%= banner %>'
+          banner: '<%= config.banner %>'
         },
         files: {
-          '<%= dirs.dest %>.min.css': ['<%= dirs.src %>*.css']
+          '<%= config.assets_dest %>.min.css': ['<%= config.assets %>*.css']
         }
       }
     },
-    qunit: {
-      files: ['<%= dirs.tests %>*.html']
-    },
     jshint: {
-      files: ['Gruntgile.js', '<%= dirs.src %>*.js', '<%= dirs.tests %>*.js'],
+      files: ['<%= config.app_source %>'],
       options: {
         curly: true,
         eqeqeq: true,
@@ -67,25 +63,48 @@ module.exports = function(grunt) {
         logged: true
       }
     },
+    qunit: {
+      files: ['<%= config.tests %>*_test.html']
+    },
     nodeunit: {
-      files: ['<%= dirs.tests %>*_test.js']
+      files: ['<%= config.tests %>*_test.js']
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'qunit']
+      files: ['<%= config.assets %>/*.{js,css,png,jpg,jpeg}', '<%= config.app_source %>', '<%= config.views %>'],
+      tasks: ['minify', 'valid'],
+      options: {
+        livereload: true
+      }
     }
   });
 
-  // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  
-  grunt.registerTask('default', ['concat', 'uglify', 'cssmin', 'qunit', 'jshint', 'nodeunit', 'watch']);
-  grunt.registerTask('minify', ['uglify', 'cssmin']);
-  grunt.registerTask('test', ['nodeunit']);
+
+  grunt.registerTask('default', ['workon']);
+  grunt.registerTask('minify', 'Minify all assets', ['uglify', 'cssmin']);
+  grunt.registerTask('valid', 'Validate for correct JS', ['jshint']);
+  grunt.registerTask('test', 'Run all tests', ['qunit', 'nodeunit']);
+  grunt.registerTask('workon', 'Prepare app and starts servers', ['minify', 'run-servers', 'watch']);
+  grunt.registerTask('run-servers', 'Run all required server and watch', function() {
+    grunt.util.spawn({
+      cmd: 'redis-server'
+    });
+    grunt.util.spawn({
+      cmd: 'node',
+      args: ['server.js']
+    });
+  });
+
+  // TODO
+  grunt.registerTask('restart-servers', 'Restart all servers', function() { // WINDOWS WAY...
+    grunt.util.spawn({
+      cmd: 'cmd /C restart-servers.bat' // Windows
+      // cmd: 'sh restart-servers.sh' // *NIX
+    });
+  });
 };

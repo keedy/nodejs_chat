@@ -5,6 +5,10 @@ var socket = io.connect();
 var logged = false;
 
 function switchControlls() {
+   // todo Fix this function, when user 
+   //is not logged and servers restart, 
+   //it showing all logged-must-be controlls
+
    $('#nicknameContainer').css('display') === 'none' ? $('#nicknameContainer').show()   : $('#nicknameContainer').hide();
    $('#nicknameInput').css('display')     === 'none' ? $('#nicknameInput').show()       : $('#nicknameInput').hide();
    $('#nicknameSet').css('display')       === 'none' ? $('#nicknameSet').show()         : $('#nicknameSet').hide();
@@ -12,6 +16,8 @@ function switchControlls() {
    $('#chatControls').css('display')      === 'none' ? $('#chatControls').show()        : $('#chatControls').hide();
    $('#usersContainer').css('display')    === 'none' ? $('#usersContainer').show()      : $('#usersContainer').hide();
    $('#users').css('display')             === 'none' ? $('#users').show()               : $('#users').hide();
+   $('#roomsContainer').css('display')    === 'none' ? $('#roomsContainer').show()      : $('#roomsContainer').hide();
+   $('#rooms').css('display')             === 'none' ? $('#rooms').show()               : $('#rooms').hide();
    $('#messageInput').css('display')      === 'none' ? $('#messageInput').show()        : $('#messageInput').hide();
    $('#submit').css('display')            === 'none' ? $('#submit').show()              : $('#submit').hide();
 }
@@ -29,7 +35,7 @@ function sentMessage() {
    if (message !== '') {
       messageElem.parent().removeClass('has-error');
       socket.emit('message', message);
-      addMessage(message, 'Me', 'chat');
+      addMessage(message, 'Me', 'chat'); //todo Replace 'me' with current user nickname
       messageElem.val('').focus();
    }
    else {
@@ -53,6 +59,10 @@ function setNickname() {
    }
 }
 
+function leave() {
+   socket.emit('beforeLeaveEvent');
+}
+
 socket.on('message', function(data) {
    addMessage(data['message'], data['nickname'], data['room']);
 });
@@ -65,6 +75,7 @@ socket.on('usersList', function(users) {
 
 socket.on('disconnect', function() {
    switchControlls();
+   leave();
 });
 
 $(function() {
@@ -73,4 +84,9 @@ $(function() {
    $('#submit').click(function() { sentMessage(); });
    $('#messageInput').keypress(function(e) { if(e.which === 13) { sentMessage(); } });
    $('#users').on('click', 'a', function() { $('#users a').removeClass('active'); $(this).addClass('active'); });
+
+   window.onunload=function() {
+return confirm('Are you sure you want to leave the current page?');
+}
+   // $(window).bind('onbeforeunload', window.confirm('aaa'));
 });
