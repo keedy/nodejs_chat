@@ -49,6 +49,14 @@ function addUserToList(redis, nickname, room) {
 	redis.sadd('list-' + room, nickname);
 }
 
+function removeUserFromList(redis, nickname, room) {
+	redis.hdel('user-data-' + nickname + '-' + room, 'nickname');
+	redis.hdel('user-data-' + nickname + '-' + room, 'connectedAt');
+	redis.hdel('user-data-' + nickname + '-' + room, 'lastActivity');
+
+	redis.srem('list-' + room, nickname);
+}
+
 function getUsers(redis, room, callback) {
 	redis.smembers('list-' + room, function(err, members) {
 		var users = [];
