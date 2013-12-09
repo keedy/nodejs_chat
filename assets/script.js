@@ -65,10 +65,7 @@ socket.on('accessLevel', function(accessLevel) {
    else {
       logged = false;
    }
-
-function leave() {
-   socket.emit('beforeLeaveEvent');
-}
+});
 
 socket.on('message', function(data) {
    addMessage(data['message'], data['nickname'], data['room']);
