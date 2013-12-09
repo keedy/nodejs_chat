@@ -23,20 +23,34 @@ function displaySingInForm() {
    .hide();
 }
 
-function addMessage(message, nickname, room) {
-   if(logged) {
-      $('#chatEntries > . ' + room).append('<div class="message"><p><strong>' + nickname + '</strong>: ' + message + '</p></div>');
+function setNickname() {
+   var nickname = $('#nicknameInput').val();
+   if(nickname !== '') {
+      socket.emit('setNickname', nickname);
+      socket.emit('setAccessLevel', 1); // user
+      socket.emit('join', configuration.defaults.primary_room_name);
+      logged = true;// hmm ?
+
+      displayChat();
+
+      $('#messageInput').focus();
+   }
+   else {
+      $('#nicknameInput').parent().addClass('has-error');
    }
 }
 
 function sentMessage() {
    var messageElem = $('#messageInput');
    var message = messageElem.val();
+   var room = config.defaults.primary_room_name;
+   var nickname = 'Me'; // get from socket too
+
 
    if (message !== '') {
       messageElem.parent().removeClass('has-error');
       socket.emit('message', message);
-      addMessage(message, 'Me', 'chat'); //todo Replace 'me' with current user nickname
+      $('#chatEntries > .' + room).append('<div class="message"><p><strong>' + nickname + '</strong>: ' + message + '</p></div>');
       messageElem.val('').focus();
    }
    else {
