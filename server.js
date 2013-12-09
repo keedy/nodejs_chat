@@ -98,6 +98,16 @@ io.sockets.on('connection', function(socket) {
 		socket.set('nickname', nickname);
 	});
 
+	socket.on('setAccessLevel', function(accessLevel) {
+		socket.set('accessLevel', accessLevel);
+	});
+
+	socket.on('getAccessLevel', function() {
+		socket.get('accessLevel', function(accessLevel) {
+			socket.emit('accessLevel', accessLevel);
+		});
+	});
+
 	socket.on('join', function(room) {
 		socket.set('room', room);
 		socket.get('nickname', function(err, nickname) {
