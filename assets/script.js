@@ -58,21 +58,13 @@ function sentMessage() {
    }
 }
 
-function setNickname() {
-   var nickname = $('#nicknameInput').val();
-   if(nickname !== '') {
-      socket.emit('setNickname', nickname);
-      socket.emit('join', 'chat');
+socket.on('accessLevel', function(accessLevel) {
+   if(accessLevel > 0) {
       logged = true;
-
-      switchControlls();
-
-      $('#messageInput').focus();
    }
    else {
-      $('#nicknameInput').parent().addClass('has-error');
+      logged = false;
    }
-}
 
 function leave() {
    socket.emit('beforeLeaveEvent');
