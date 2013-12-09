@@ -72,6 +72,7 @@ socket.on('message', function(data) {
 });
 
 socket.on('usersList', function(users) {
+   $('#users').empty();
    $.each(users, function(k, v) {
       $('#users').append('<a href="#" class="list-group-item">' + v['nickname'] + '</a>');
    });
