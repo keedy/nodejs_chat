@@ -64,10 +64,10 @@ module.exports = function(grunt) {
       }
     },
     qunit: {
-      files: ['<%= config.tests %>*_test.html']
+      files: ['<%= config.tests %>qunit/*_test.html']
     },
     nodeunit: {
-      files: ['<%= config.tests %>*_test.js']
+      files: ['<%= config.tests %>nodeunit/*_test.js']
     },
     watch: {
       files: ['<%= config.assets %>/*.{js,css,png,jpg,jpeg}', '<%= config.app_source %>', '<%= config.views %>'],
