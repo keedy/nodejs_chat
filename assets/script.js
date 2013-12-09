@@ -4,22 +4,23 @@
 var socket = io.connect();
 var logged = false;
 
-function switchControlls() {
-   // todo Fix this function, when user 
-   //is not logged and servers restart, 
-   //it showing all logged-must-be controlls
 
-   $('#nicknameContainer').css('display') === 'none' ? $('#nicknameContainer').show()   : $('#nicknameContainer').hide();
-   $('#nicknameInput').css('display')     === 'none' ? $('#nicknameInput').show()       : $('#nicknameInput').hide();
-   $('#nicknameSet').css('display')       === 'none' ? $('#nicknameSet').show()         : $('#nicknameSet').hide();
-   $('#chatEntries').css('display')       === 'none' ? $('#chatEntries').show()         : $('#chatEntries').hide();
-   $('#chatControls').css('display')      === 'none' ? $('#chatControls').show()        : $('#chatControls').hide();
-   $('#usersContainer').css('display')    === 'none' ? $('#usersContainer').show()      : $('#usersContainer').hide();
-   $('#users').css('display')             === 'none' ? $('#users').show()               : $('#users').hide();
-   $('#roomsContainer').css('display')    === 'none' ? $('#roomsContainer').show()      : $('#roomsContainer').hide();
-   $('#rooms').css('display')             === 'none' ? $('#rooms').show()               : $('#rooms').hide();
-   $('#messageInput').css('display')      === 'none' ? $('#messageInput').show()        : $('#messageInput').hide();
-   $('#submit').css('display')            === 'none' ? $('#submit').show()              : $('#submit').hide();
+function displayChat() {
+   //controlls for new users
+   $('#nicknameContainer, #nicknameInput, #nicknameSet').hide();
+
+   //controlls for logged users
+   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit')
+   .show();
+}
+
+function displaySingInForm() {
+    //controlls for new users
+   $('#nicknameContainer, #nicknameInput, #nicknameSet').show();
+
+   //controlls for logged users
+   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit')
+   .hide();
 }
 
 function addMessage(message, nickname, room) {
