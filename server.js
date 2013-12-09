@@ -92,6 +92,8 @@ function getUsers(redis, room, callback) {
 }
 
 io.sockets.on('connection', function(socket) {
+	socket.emit('config', config.chat);
+
 	socket.on('setNickname', function(nickname) {
 		socket.set('nickname', nickname);
 	});
@@ -114,5 +116,16 @@ io.sockets.on('connection', function(socket) {
 			});
 		});
 	});
+
+	socket.on('logout', function() {
+		socket.get('nickname', function(error, nickname) {
+			socket.get('room', function(error, room) {
+				removeUserFromList(datastore, nickname, room);
+				getUsers(datastore, room, function(users) {
+					socket.broadcast.emit('usersList', users);
+				});
+				socket.set('accessLevel', 0);
+			});
+		});
 	});
 });
