@@ -47,7 +47,7 @@ function joinChatRoom(redis, nickname, roomName) {
 	redis.hset('user-data-' + nickname + '-' + roomName, 'connectedAt', Date.now());
 	redis.hset('user-data-' + nickname + '-' + roomName, 'lastActivity', Date.now());
 
-	redis.sadd('list-' + room, nickname);
+	redis.sadd('room-users-' + roomName, nickname);
 }
 
 function leaveChatRoom(redis, nickname, roomName) {
@@ -55,7 +55,7 @@ function leaveChatRoom(redis, nickname, roomName) {
 	redis.hdel('user-data-' + nickname + '-' + roomName, 'connectedAt');
 	redis.hdel('user-data-' + nickname + '-' + roomName, 'lastActivity');
 
-	redis.srem('list-' + room, nickname);
+	redis.srem('room-users-' + roomName, nickname);
 }
 
 function getUsersList(redis, roomName, callback) {
