@@ -2,26 +2,17 @@
 /*global $:false, io:false */
 
 var socket = io.connect();
-var logged = false;
-
+var logged = false; // todo get from socket getState...
 var configuration = null;
 
 function displayChat() {
-   //controlls for new users
    $('#nicknameContainer, #nicknameInput, #nicknameSet').hide();
-
-   //controlls for logged users
-   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit')
-   .show();
+   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit').show();
 }
 
-function displaySingInForm() {
-    //controlls for new users
+function displaySignInForm() {
    $('#nicknameContainer, #nicknameInput, #nicknameSet').show();
-
-   //controlls for logged users
-   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit')
-   .hide();
+   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit').hide();
 }
 
 function setNickname() {
@@ -69,7 +60,7 @@ socket.on('accessLevel', function(accessLevel) {
 });
 
 socket.on('message', function(data) {
-   addMessage(data['message'], data['nickname'], data['room']);
+   sentMessage();
 });
 
 socket.on('config', function(config) {
@@ -83,9 +74,8 @@ socket.on('usersList', function(users) {
    });
 });
 
-socket.on('disconnect', function() {
-   switchControlls();
-   leave();
+socket.on('logout', function() {
+   displaySignInForm();
 });
 
 $(function() {
