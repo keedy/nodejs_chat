@@ -42,24 +42,24 @@ datastore.on('error', function(err) {
 	console.log('Redis error: ' + err);
 });
 
-function addUserToList(redis, nickname, room) {
-	redis.hset('user-data-' + nickname + '-' + room, 'nickname', nickname);
-	redis.hset('user-data-' + nickname + '-' + room, 'connectedAt', Date.now());
-	redis.hset('user-data-' + nickname + '-' + room, 'lastActivity', Date.now());
+function joinChatRoom(redis, nickname, roomName) {
+	redis.hset('user-data-' + nickname + '-' + roomName, 'nickname', nickname);
+	redis.hset('user-data-' + nickname + '-' + roomName, 'connectedAt', Date.now());
+	redis.hset('user-data-' + nickname + '-' + roomName, 'lastActivity', Date.now());
 
 	redis.sadd('list-' + room, nickname);
 }
 
-function removeUserFromList(redis, nickname, room) {
-	redis.hdel('user-data-' + nickname + '-' + room, 'nickname');
-	redis.hdel('user-data-' + nickname + '-' + room, 'connectedAt');
-	redis.hdel('user-data-' + nickname + '-' + room, 'lastActivity');
+function leaveChatRoom(redis, nickname, roomName) {
+	redis.hdel('user-data-' + nickname + '-' + roomName, 'nickname');
+	redis.hdel('user-data-' + nickname + '-' + roomName, 'connectedAt');
+	redis.hdel('user-data-' + nickname + '-' + roomName, 'lastActivity');
 
 	redis.srem('list-' + room, nickname);
 }
 
-function getUsers(redis, room, callback) {
-	redis.smembers('list-' + room, function(err, members) {
+function getUsersList(redis, roomName, callback) {
+	redis.smembers('room-users-' + roomName, function(err, members) {
 		var users = [];
 		var i = 0;
 		var numCompleted = 0;
@@ -85,7 +85,7 @@ function getUsers(redis, room, callback) {
 			};
 			for(i = 0; i < members.length; ++i) {
 				var userID = members[i];
-				redis.hgetall('user-data-' + userID + '-' + room, userCallback);
+				redis.hgetall('user-data-' + userID + '-' + roomName, userCallback);
 			}
 		}
 	});
@@ -111,8 +111,8 @@ io.sockets.on('connection', function(socket) {
 	socket.on('join', function(room) {
 		socket.set('room', room);
 		socket.get('nickname', function(err, nickname) {
-			addUserToList(datastore, nickname, room);
-			getUsers(datastore, room, function(users) {
+			joinChatRoom(datastore, nickname, room);
+			getUsersList(datastore, room, function(users) {
 				io.sockets.emit('usersList', users);
 			});
 		});
@@ -130,8 +130,8 @@ io.sockets.on('connection', function(socket) {
 	socket.on('logout', function() {
 		socket.get('nickname', function(error, nickname) {
 			socket.get('room', function(error, room) {
-				removeUserFromList(datastore, nickname, room);
-				getUsers(datastore, room, function(users) {
+				leaveChatRoom(datastore, nickname, room);
+				getUsersList(datastore, room, function(users) {
 					socket.broadcast.emit('usersList', users);
 				});
 				socket.set('accessLevel', 0);
