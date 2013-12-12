@@ -74,6 +74,13 @@ socket.on('usersList', function(users) {
    });
 });
 
+socket.on('roomsList', function(rooms) {
+   $('#rooms').empty();
+   $.each(rooms, function(k, v) {
+      $('#rooms').append('<a href="#" class="list-group-item">' +v['name'] + '(' + v['counter'] + ')</a>');
+   });
+})
+
 socket.on('logout', function() {
    displaySignInForm();
 });
@@ -84,6 +91,7 @@ $(function() {
    $('#submit').click(function() { sentMessage(); });
    $('#messageInput').keypress(function(e) { if(e.which === 13) { sentMessage(); } });
    $('#users').on('click', 'a', function() { $('#users a').removeClass('active'); $(this).addClass('active'); });
+   $('#rooms').on('click', 'a', function() { $('#rooms a').removeClass('active'); $(this).addClass('active'); });
 
    window.onunload=function() {
 return confirm('Are you sure you want to leave the current page?');

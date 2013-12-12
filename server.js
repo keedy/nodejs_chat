@@ -48,6 +48,9 @@ function joinChatRoom(redis, nickname, roomName) {
 	redis.hset('user-data-' + nickname + '-' + roomName, 'lastActivity', Date.now());
 
 	redis.sadd('room-users-' + roomName, nickname);
+	redis.sadd('room-list', roomName);
+	redis.hincrby('room-data-' + roomName, 'counter', 1);
+	redis.hset('room-data-' + roomName, 'name', roomName);
 }
 
 function leaveChatRoom(redis, nickname, roomName) {
@@ -56,6 +59,7 @@ function leaveChatRoom(redis, nickname, roomName) {
 	redis.hdel('user-data-' + nickname + '-' + roomName, 'lastActivity');
 
 	redis.srem('room-users-' + roomName, nickname);
+	redis.hincrby('room-data-' + roomName, 'counter', -1);
 }
 
 function getUsersList(redis, roomName, callback) {
@@ -91,6 +95,39 @@ function getUsersList(redis, roomName, callback) {
 	});
 }
 
+function getRoomsList(redis, callback) {
+	redis.smembers('room-list', function(err, rooms) {
+		var roomsList = [];
+		var i = 0;
+		var numCompleted = 0;
+
+		var markAsCompleted = function() {
+			numCompleted++;
+
+			if(numCompleted === rooms.length) {
+				callback(roomsList);
+			}
+		};
+
+		if(!rooms || rooms.length === 0) {
+			callback([]);
+		}
+		else {
+			var roomCallback = function(err, roomData) {
+				roomsList.push({
+					'name': roomData.name,
+					'counter': roomData.counter
+				});
+				markAsCompleted();
+			};
+			for(i = 0; i < rooms.length; ++i) {
+				var roomName = rooms[i];
+				redis.hgetall('room-data-' + roomName, roomCallback);
+			}
+		}
+	});
+}
+
 io.sockets.on('connection', function(socket) {
 	socket.emit('config', config.chat);
 
@@ -115,6 +152,10 @@ io.sockets.on('connection', function(socket) {
 			getUsersList(datastore, room, function(users) {
 				io.sockets.emit('usersList', users);
 			});
+
+			getRoomsList(datastore, function(rooms) {
+				io.sockets.emit('roomsList', rooms);
+			});
 		});
 	});
 
@@ -133,6 +174,10 @@ io.sockets.on('connection', function(socket) {
 				leaveChatRoom(datastore, nickname, room);
 				getUsersList(datastore, room, function(users) {
 					socket.broadcast.emit('usersList', users);
+				});
+
+				getRoomsList(datastore, function(rooms) {
+					socket.broadcast.emit('roomsList', rooms);
 				});
 				socket.set('accessLevel', 0);
 			});
