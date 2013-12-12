@@ -12,7 +12,7 @@ exports.redis = {
 
 exports.chat = {
 	defaults: {
-		primary_room_name: 'chat'
+		main_room_name: 'chat'
 	},
 	events: {
 		user_join: { // displayed when user join chat

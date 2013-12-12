@@ -4,6 +4,7 @@
 var socket = io.connect();
 var logged = false;
 
+var configuration = null;
 
 function displayChat() {
    //controlls for new users
@@ -28,7 +29,7 @@ function setNickname() {
    if(nickname !== '') {
       socket.emit('setNickname', nickname);
       socket.emit('setAccessLevel', 1); // user
-      socket.emit('join', configuration.defaults.primary_room_name);
+      socket.emit('join', configuration.defaults.main_room_name);
       logged = true;// hmm ?
 
       displayChat();
@@ -43,7 +44,7 @@ function setNickname() {
 function sentMessage() {
    var messageElem = $('#messageInput');
    var message = messageElem.val();
-   var room = config.defaults.primary_room_name;
+   var room = configuration.defaults.main_room_name;
    var nickname = 'Me'; // get from socket too
 
 
@@ -70,6 +71,10 @@ socket.on('accessLevel', function(accessLevel) {
 socket.on('message', function(data) {
    addMessage(data['message'], data['nickname'], data['room']);
 });
+
+socket.on('config', function(config) {
+   configuration = config;
+})
 
 socket.on('usersList', function(users) {
    $('#users').empty();
