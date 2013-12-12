@@ -93,8 +93,11 @@ $(function() {
    $('#users').on('click', 'a', function() { $('#users a').removeClass('active'); $(this).addClass('active'); });
    $('#rooms').on('click', 'a', function() { $('#rooms a').removeClass('active'); $(this).addClass('active'); });
 
-   window.onunload=function() {
-return confirm('Are you sure you want to leave the current page?');
-}
-   // $(window).bind('onbeforeunload', window.confirm('aaa'));
+   window.onbeforeunload = function(e) {
+      if(logged) {
+         socket.emit('logout');
+         logged = false; //fixme
+      }
+   };
+
 });
