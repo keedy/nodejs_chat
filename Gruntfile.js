@@ -56,11 +56,6 @@ module.exports = function(grunt) {
         undef: true,
         unused: true,
         boss: true
-      },
-      globals: {
-        console: true,
-        socket: true,
-        logged: true
       }
     },
     qunit: {
@@ -85,26 +80,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['workon']);
+  grunt.registerTask('default', ['minify', 'valid']);
   grunt.registerTask('minify', 'Minify all assets', ['uglify', 'cssmin']);
   grunt.registerTask('valid', 'Validate for correct JS', ['jshint']);
   grunt.registerTask('test', 'Run all tests', ['qunit', 'nodeunit']);
-  grunt.registerTask('workon', 'Prepare app and starts servers', ['minify', 'run-servers', 'watch']);
-  grunt.registerTask('run-servers', 'Run all required server and watch', function() {
-    grunt.util.spawn({
-      cmd: 'redis-server'
-    });
-    grunt.util.spawn({
-      cmd: 'node',
-      args: ['server.js']
-    });
-  });
-
-  // TODO
-  grunt.registerTask('restart-servers', 'Restart all servers', function() { // WINDOWS WAY...
-    grunt.util.spawn({
-      cmd: 'cmd /C restart-servers.bat' // Windows
-      // cmd: 'sh restart-servers.sh' // *NIX
-    });
-  });
 };
