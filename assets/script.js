@@ -2,17 +2,20 @@
 /*global $:false, io:false */
 
 var socket = io.connect();
-var logged = false; // todo get from socket getState...
+var logged = false; // fixme: get from socket getAccessLevel method...
+var accessLevel = 0; // guest
 var configuration = null;
 
 function displayChat() {
-   $('#nicknameContainer, #nicknameInput, #nicknameSet').hide();
-   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit').show();
+   $('#loaderContainer').hide();
+   $('#loginContainer').hide();
+   $('#chatContainer').show();
 }
 
-function displaySignInForm() {
-   $('#nicknameContainer, #nicknameInput, #nicknameSet').show();
-   $('#chatEntries, #chatControls, #usersContainer, #users, #roomsContainer, #rooms, #messageInput,#submit').hide();
+function displayLoginForm() {
+   $('#loaderContainer').hide();
+   $('#loginContainer').show();
+   $('#chatContainer').hide();
 }
 
 function setNickname() {
@@ -21,7 +24,7 @@ function setNickname() {
       socket.emit('setNickname', nickname);
       socket.emit('setAccessLevel', 1); // user
       socket.emit('join', configuration.defaults.main_room_name);
-      logged = true;// hmm ?
+      logged = true;// fixme: use getAccessLevel
 
       displayChat();
 
@@ -50,22 +53,25 @@ function sentMessage() {
    }
 }
 
-socket.on('accessLevel', function(accessLevel) {
-   if(accessLevel > 0) {
+socket.on('accessLevel', function(response) {
+   if(response > 0) {
       logged = true;
+      accessLevel = response;
    }
    else {
       logged = false;
+      accessLevel = 0;
    }
+});
+
+socket.on('config', function(config) {
+   configuration = config;
+   displayLoginForm();
 });
 
 socket.on('message', function(data) {
    sentMessage();
 });
-
-socket.on('config', function(config) {
-   configuration = config;
-})
 
 socket.on('usersList', function(users) {
    $('#users').empty();
@@ -82,7 +88,8 @@ socket.on('roomsList', function(rooms) {
 })
 
 socket.on('logout', function() {
-   displaySignInForm();
+   // TODO
+   displayLoginForm();
 });
 
 $(function() {

@@ -1,8 +1,8 @@
 {
-  "name": "nodejs_chat",
+  "name": "chatto",
   "version": "0.0.1",
-  "title": "Simple Chat",
-  "description": "Simple chat based on Node.js, Socket.io and Redis",
+  "title": "Chatto - Simple Chat",
+  "description": "Simple chat based on Node.js, Socket.io and Redis or MongoDB",
   "author": {
     "name": "Piotr Biernat",
     "email": "<pitr.biernat@gmail.com>",
@@ -20,17 +20,15 @@
     "grunt-contrib-uglify": "~0.2.7",
     "grunt-contrib-cssmin": "~0.7.0",
     "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-qunit": "~0.3.0",
-    "grunt-contrib-nodeunit": "~0.2.2",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-lib-phantomjs": "~0.4.0",
-    "nodeunit": "~0.8.2",
-    "socket.io-client": "~0.9.16"
+    "grunt-contrib-watch": "~0.5.3"
   },
   "dependencies": {
-    "redis": "~0.9.1",
+    "express": "~3.4.6",
     "twig": "~0.5.13",
     "socket.io": "~0.9.16",
-    "express": "~3.4.6"
+    "socket.io-session": "0.0.5",
+    "connect": "~2.12.0",
+    "redis": "~0.9.1",
+    "cookie": "~0.1.0"
   }
 }

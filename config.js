@@ -1,13 +1,17 @@
 exports.server = {
 	host: process.env.APP_IP || '0.0.0.0',
-	port: parseInt(process.env.APP_PORT || '8000')
+	port: parseInt(process.env.APP_PORT || '8000'),
+	log_level: parseInt(process.env.REDIS_LOG_LEVEL || '3')
 };
 
 exports.redis = {
 	host: process.env.REDIS_HOST || 'localhost',
 	port: parseInt(process.env.REDIS_PORT || '6379'),
-	password: process.env.REDIS_PASSWORD || undefined,
-	log_level: parseInt(process.env.REDIS_LOG_LEVEL || '3')
+	password: process.env.REDIS_PASSWORD || undefined
+};
+
+exports.session = {
+	secret_key: '5shS$236Dye^2(s2hd73^2'
 };
 
 exports.chat = {
